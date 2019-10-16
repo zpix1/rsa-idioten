@@ -48,6 +48,7 @@
           <input type="text" v-model="cryptotext" />
         </div>
         <input type="button" value="Decrypt" @click="decrypt" />
+        <input type="button" value="Encrypt" @click="encrypt" />
         <div>
           Plaintext:
           <input type="text" v-model="plaintext" />
@@ -63,7 +64,7 @@
 
 <script>
 /* global BigInt */
-import { egcd, expmod, hex_to_ascii } from "../libs/utils";
+import { egcd, expmod, hex_to_ascii, ascii_to_bi } from "../libs/utils";
 
 export default {
   name: "MainView",
@@ -86,7 +87,7 @@ export default {
       this.plaintext = this.plaintext && BigInt(this.plaintext);
     },
     calculate_phi: function() {
-      this.phi = this.nfactors.reduce((a, x) => a * (x - BigInt(1)));
+      this.phi = this.nfactors.reduce((a, x) => a * (x - BigInt(1)), 1n);
     },
     calculate_n: function() {
       this.n = this.nfactors.reduce((a, x) => a * x);
@@ -96,6 +97,9 @@ export default {
     },
     decrypt: function() {
       this.plaintext = expmod(this.cryptotext, this.d, this.n);
+    },
+    encrypt: function () {
+      this.cryptotext = expmod(this.plaintext, this.e, this.n);
     }
   },
 
@@ -124,8 +128,9 @@ export default {
       get: function() {
         return hex_to_ascii(this.plaintext.toString(16));
       },
-      set: function() {
-        
+      set: function(v) {
+        console.log(ascii_to_bi(v));
+        this.plaintext = ascii_to_bi(v);
       }
     }
   }

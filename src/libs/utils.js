@@ -22,6 +22,24 @@ function egcd(m, n) {
   return [d, a, b];
 }
 
+function bi_pow(a, b) {
+  let ans = 1n;
+  for (let i = 0; i < b; i++) {
+    ans *= a;
+  }
+  // console.log(a, b, ans);
+  return ans;
+}
+
+function ascii_to_bi(str1) {
+  var ans = 0n;
+  for (var i = str1.length - 1; i > -1; i--) {
+    ans += BigInt(str1.charCodeAt(i)) * bi_pow(256n, BigInt(str1.length - i - 1));
+  }
+  // console.log(hex_to_ascii(ans.toString(16)));
+  return ans;
+}
+
 function hex_to_ascii(str1) {
   var hex = str1.toString(16);
   var str = "";
@@ -51,4 +69,4 @@ var expmod = function(a, b, n) {
   return result;
 };
 
-export { egcd, expmod, hex_to_ascii };
+export { egcd, expmod, hex_to_ascii, ascii_to_bi };
