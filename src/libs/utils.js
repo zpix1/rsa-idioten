@@ -1,3 +1,23 @@
+function sqrt(value) {
+  if (value < 0n) {
+      throw 'square root of negative numbers is not supported'
+  }
+
+  if (value < 2n) {
+      return value;
+  }
+
+  function newtonIteration(n, x0) {
+      const x1 = ((n / x0) + x0) >> 1n;
+      if (x0 === x1 || x0 === (x1 - 1n)) {
+          return x0;
+      }
+      return newtonIteration(n, x1);
+  }
+
+  return newtonIteration(value, 1n);
+}
+
 function egcd(m, n) {
   var a1 = 1n;
   var b1 = 0n;
@@ -67,6 +87,30 @@ var expmod = function(a, b, n) {
     x = x % n;
   }
   return result;
-};
+}
 
-export { egcd, expmod, hex_to_ascii, ascii_to_bi };
+// function mr_test(n, k=100){
+//   if(n<2) return false;
+//   if(n==2) return true;
+//   let [d,r] = [n-1,0]
+//   while(!((d/2)%1)){d/=2;r++}
+//   WitnessLoop: for(let i = 0; i < k; i++){
+//     let a = Math.floor(Math.random()*(n-4))+2;
+//     let x = 1
+//     for(let z=0; z<d; z++){
+//       x=(x*a)%n;
+//     }
+//     if(x==1 || x==n-1){
+//       continue WitnessLoop;
+//     }
+//     for(let j = 0; j < r - 1; j++){
+//       x=(x*x)%n;
+//       if(x==1) return false;
+//       if(x==n-1) continue WitnessLoop;
+//     }
+//     return false;
+//   }
+//   return true;
+// }
+
+export { egcd, expmod, hex_to_ascii, ascii_to_bi, sqrt, bi_pow };
