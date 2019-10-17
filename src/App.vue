@@ -16,9 +16,5 @@ export default {
 </script>
 
 <style>
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  font-family: "Computer Modern Sans", sans-serif;
-}
+
 </style>

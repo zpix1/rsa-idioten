@@ -1,4 +1,18 @@
 <template>
+<div class="container">
+
+  <div id='floating-checks'>
+    Validations:<br>
+      <div v-bind:class="{ 'warning': !(!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) }">
+        N {{ (!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) ? '=' : '&ne;' }} P(factors)
+      </div>
+      <div v-bind:class="{ 'warning': !(e && phi && gcd(e, phi) == 1) }">
+        gcd(e, &phi;) {{ (e && phi && gcd(e, phi) == 1) ? '=' : '&ne;' }} 1
+      </div>
+      <!-- <div v-bind:class="{ 'warning': !(false) }">
+        All factors in factorization are prime
+      </div> -->
+    </div>
   <div class="main">
     <div class="header">RSA Idioten</div>
     <div id="grid">
@@ -11,22 +25,23 @@
             @click="calculate_n"
           /><br>
         <br />E:
-        <input type="text" v-model="e" />
-        <a @click="set_e(3)"> 3</a>
-        <a @click="set_e(65537)"> | 65537</a>
+        <input type="text" v-model="e" /><br>
+        Set from template: 
+        <a @click="set_e(3)"><b> 3</b></a>
+        <a @click="set_e(65537)"> | <b>65537</b></a>
       </div>
       <div id="n-info">
         <div>
-          N {{ (!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) ? '=' : '&ne;' }} P(factors)
-          
+          N Factorize tools
         </div>
         <div>
-          <input
-            type="button"
-            value="Calculate from factors"
-            @click="calculate_n"
-          /><br>
-          <input type="button" value="Fermat method" @click="fermat_prime()" />
+          <input :disabled="!n" type="button" value="Fermat method" @click="fermat_prime()" />
+        </div>
+        <div>
+          <input disabled type="button" value="Bruteforce" />
+        </div>
+        <div>
+          <input disabled type="button" value="Factordb.com" />
         </div>
       </div>
       <div id="p-q-phi">
@@ -54,7 +69,7 @@
         N Prime Factorization ({{ nfactors.length }} factors found):
         <br />
         <textarea v-model="nfactors_raw" class="factors-textarea"></textarea>
-        {{ mr_filter().length }}
+        <!-- {{ mr_filter().length }} -->
       </div>
       <div id="d">
         Calculated D:
@@ -81,13 +96,15 @@
         <textarea style="width: 100%; height: 300px;" :value="logtext"></textarea>
       </div>
     </div>
+    
   </div>
+</div>
 </template>
 
 <script>
 /* global BigInt */
 import { egcd, expmod, hex_to_ascii, ascii_to_bi, bi_pow } from "../libs/utils";
-import { fermat_prime, mr_test } from "../libs/rsa";
+import { fermat_prime } from "../libs/rsa";
 
 export default {
   name: "MainView",
@@ -103,12 +120,11 @@ export default {
     };
   },
   created: function() {
-    // console.log(mr_test(10n));
-    // console.log(mr_test(27n));
-    // console.log(mr_test(117n));
-    console.log(fermat_prime(13689n));
   },
   methods: {
+    gcd: function (x, y) {
+      return egcd(x, y)[0];
+    },
     log: function (str) {
       this.logtext += str + '\n';
     },
@@ -123,8 +139,6 @@ export default {
       this.phi = this.nfactors.reduce((a, x) => a * (x - BigInt(1)), 1n);
     },
     calculate_phi_from_equals: function() {
-      console.log(this.nfactors);
-      // console.log(this.nfactors[0]**BigInt(this.nfactors.length) - this.nfactors[0]**(BigInt(this.nfactors.length)-1n));
       this.phi =
         bi_pow(this.nfactors[0], BigInt(this.nfactors.length)) -
         bi_pow(this.nfactors[0], BigInt(this.nfactors.length) - 1n);
@@ -138,7 +152,6 @@ export default {
       if (ans == null) {
         return false;
       } else {
-        console.log(ans);
         this.nfactors = [ans, this.n / ans];
         return true;
       }
@@ -153,7 +166,7 @@ export default {
       this.cryptotext = expmod(this.plaintext, this.e, this.n);
     },
     mr_filter: function () {
-      return this.nfactors.filter(x => !false);
+      return this.nfactors.filter(() => !false);
     }
   },
 
@@ -171,7 +184,6 @@ export default {
         }
       },
       set: function(v) {
-        console.log(v);
         this.nfactors_raw = v.map(x => x.toString()).join("\n");
       }
     },
@@ -181,7 +193,6 @@ export default {
         return 0n;
       }
       let gcd = egcd(this.phi, this.e);
-      console.log(gcd);
       if (gcd[2] < 0) {
         gcd[2] += this.phi;
       }
@@ -192,7 +203,6 @@ export default {
         return hex_to_ascii(this.plaintext.toString(16));
       },
       set: function(v) {
-        console.log(ascii_to_bi(v));
         this.plaintext = ascii_to_bi(v);
       }
     }
@@ -201,6 +211,17 @@ export default {
 </script>
 
 <style>
+
+.container, body, html {
+  margin: 0;
+  font-family: "Computer Modern Sans", sans-serif;
+}
+
+.main {
+  max-width: 1000px;
+  margin: 0 auto;
+  
+}
 
 .header {
   font-size: 3vw;
@@ -218,6 +239,8 @@ export default {
 }
 
 #grid > div {
+  /* border: 1px solid black; */
+  /* border-radius: 10px; */
   font-size: 20px;
   padding: 0.5em;
   background: gold;
@@ -229,6 +252,28 @@ export default {
   margin: 0px 0px 10px 0px;
   height: 30px;
   font-size: 20px;
+}
+
+#floating-checks {
+  border: 1px solid black;
+  border-radius: 0px 10px 10px 0px;
+
+  position: absolute;
+  background: gold;
+  float: left;
+  clear: both;
+  overflow: auto;
+  top: 100px;
+
+  padding: 10px;
+  margin-left: 0px;
+
+  font-size: 20px;
+  /* display: block; */
+}
+
+#floating-checks .warning {
+  color: red;
 }
 
 #grid input[type="button"] {
