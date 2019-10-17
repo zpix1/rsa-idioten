@@ -1,22 +1,30 @@
-import { sqrt } from "./utils";
+import { sqrt, bi_pow } from "./utils";
 
-function fermat_prime(n) {
-  if (n % 2n == 0n) {
+function fermat_factorization(n) {
+  if (n % 2n === 0n) {
     return null;
   }
+
   let a = sqrt(n);
-  let b2 = a * a - n;
-
-  while (b2 > 0 && sqrt(b2) ** 2n == b2) {
-    a += 1n;
-    b2 = a * a - n;
+  let b = 0n;
+  
+  let i = 0;
+  while (i < 10e6) {
+    if (i % 100000 === 0) {
+        console.log(i, a, b, n);
+    }
+    let m = (a*a) - (b*b);
+    if (m === n) {
+        return a + b;
+    } else if (m < n) {
+        a++;
+    } else {
+        b++;
+    }
+    i++;
   }
 
-  if (b2 < 0n) {
-    return null;
-  }
-
-  return a - sqrt(b2);
+  return null;
 }
 
 function mr_test(n, k = 100) {
@@ -46,4 +54,4 @@ function mr_test(n, k = 100) {
   return true;
 }
 
-export { fermat_prime, mr_test };
+export { fermat_factorization, mr_test };

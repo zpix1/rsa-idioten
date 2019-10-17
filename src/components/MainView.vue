@@ -1,7 +1,7 @@
 <template>
 <div class="container">
 
-  <div id='floating-checks'>
+  <div id='floating-validations'>
     Validations:<br>
       <div v-bind:class="{ 'warning': !(!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) }">
         N {{ (!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) ? '=' : '&ne;' }} P(factors)
@@ -35,7 +35,7 @@
           N Factorize tools
         </div>
         <div>
-          <input :disabled="!n" type="button" value="Fermat method" @click="fermat_prime()" />
+          <input :disabled="!n" type="button" value="Fermat method (up to 10 millions)" @click="fermat_factorization()" />
         </div>
         <div>
           <input disabled type="button" value="Bruteforce" />
@@ -48,21 +48,15 @@
         <div>
           &phi;(N):
           <input type="text" v-model="phi" />
-          <p>
+          <div>
             <input
               type="button"
-              value="Calculate from different prime factors"
+              value="Calculate from prime factors"
               :disabled="(new Set(nfactors)).size != nfactors.length"
               @click="calculate_phi"
             />
             <br />
-            <input
-              type="button"
-              value="Calculate from equal prime factors"
-              :disabled="(new Set(nfactors)).size != 1"
-              @click="calculate_phi_from_equals"
-            />
-          </p>
+          </div>
         </div>
       </div>
       <div class="n-factors">
@@ -80,8 +74,10 @@
           Cryptotext:
           <input type="text" v-model="cryptotext" />
         </div>
+        <div>
         <input type="button" value="Decrypt" @click="decrypt" />
         <input type="button" value="Encrypt" @click="encrypt" />
+        </div>
         <div>
           Plaintext:
           <input type="text" v-model="plaintext" />
@@ -104,7 +100,7 @@
 <script>
 /* global BigInt */
 import { egcd, expmod, hex_to_ascii, ascii_to_bi, bi_pow } from "../libs/utils";
-import { fermat_prime } from "../libs/rsa";
+import { fermat_factorization } from "../libs/rsa";
 
 export default {
   name: "MainView",
@@ -136,18 +132,28 @@ export default {
       this.plaintext = this.plaintext && BigInt(this.plaintext);
     },
     calculate_phi: function() {
-      this.phi = this.nfactors.reduce((a, x) => a * (x - BigInt(1)), 1n);
+      let factor_d = {};
+      for (let i = 0; i < this.nfactors.length; i++) {
+        factor_d[this.nfactors[i].toString()] = (factor_d[this.nfactors[i].toString()] || 0n) + 1n;
+      }
+      let ans = 1n;
+      for (let f in factor_d) {
+        // console.log(BigInt(f), factor_d[f]);
+        ans *= bi_pow(BigInt(f), factor_d[f]) - bi_pow(BigInt(f), factor_d[f] - 1n);
+      }
+      console.log(ans);
+      this.phi = ans;
     },
-    calculate_phi_from_equals: function() {
-      this.phi =
-        bi_pow(this.nfactors[0], BigInt(this.nfactors.length)) -
-        bi_pow(this.nfactors[0], BigInt(this.nfactors.length) - 1n);
-    },
+    // calculate_phi_from_equals: function() {
+    //   this.phi =
+    //     bi_pow(this.nfactors[0], BigInt(this.nfactors.length)) -
+    //     bi_pow(this.nfactors[0], BigInt(this.nfactors.length) - 1n);
+    // },
     calculate_n: function() {
       this.n = this.nfactors.reduce((a, x) => a * x);
     },
-    fermat_prime: function() {
-      let ans = fermat_prime(BigInt(this.n));
+    fermat_factorization: function() {
+      let ans = fermat_factorization(BigInt(this.n));
       this.log('Fermat run: ' + (ans ? 'FOUND' : 'not found'));
       if (ans == null) {
         return false;
@@ -231,10 +237,10 @@ export default {
 #grid {
   display: grid;
   grid-template-areas:
-    "n n-info n-info log log log"
-    "p-q-phi p-q-phi n-factors log log log"
-    "p-q-phi p-q-phi d . . ."
-    "enc-dec enc-dec ascii . . .";
+    "n n-info n-info log log"
+    "p-q-phi p-q-phi n-factor log log"
+    "p-q-phi p-q-phi d . ."
+    "enc-dec enc-dec ascii . .";
   grid-gap: 10px;
 }
 
@@ -254,8 +260,9 @@ export default {
   font-size: 20px;
 }
 
-#floating-checks {
-  border: 1px solid black;
+#floating-validations {
+  border: 3px solid black;
+  border-left: 0px;
   border-radius: 0px 10px 10px 0px;
 
   position: absolute;
@@ -272,7 +279,7 @@ export default {
   /* display: block; */
 }
 
-#floating-checks .warning {
+#floating-validations .warning {
   color: red;
 }
 
