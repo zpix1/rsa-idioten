@@ -10,6 +10,7 @@
   "dependencies": {
     "big-integer": "^1.6.47",
     "core-js": "^2.6.5",
+    "jasmine": "^3.5.0",
     "vue": "^2.6.10"
   },
   "devDependencies": {
@@ -32,6 +33,9 @@
       "eslint:recommended"
     ],
     "rules": {},
+    "globals": {
+      "BigInt": true
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

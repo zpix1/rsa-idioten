@@ -1,6 +1,6 @@
-import { sqrt, bi_pow } from "./utils";
+import { sqrt } from "@/libs/utils";
 
-function fermat_factorization(n) {
+function fermat_factorization(n, log_f=console.log) {
   if (n % 2n === 0n) {
     return null;
   }
@@ -11,7 +11,7 @@ function fermat_factorization(n) {
   let i = 0;
   while (i < 10e6) {
     if (i % 100000 === 0) {
-        console.log(i, a, b, n);
+        log_f('Fermat factorization progress: ', i, a, b, n);
     }
     let m = (a*a) - (b*b);
     if (m === n) {

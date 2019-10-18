@@ -1,106 +1,115 @@
 <template>
-<div class="container">
-
-  <div id='floating-validations'>
-    Validations:<br>
-      <div v-bind:class="{ 'warning': !(!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) }">
-        N {{ (!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) ? '=' : '&ne;' }} P(factors)
-      </div>
-      <div v-bind:class="{ 'warning': !(e && phi && gcd(e, phi) == 1) }">
-        gcd(e, &phi;) {{ (e && phi && gcd(e, phi) == 1) ? '=' : '&ne;' }} 1
-      </div>
+  <div class="container">
+    <div id="floating-validations">
+      Validations:
+      <br />
+      <div
+        v-bind:class="{ 'warning': !(!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) }"
+      >N {{ (!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) ? '=' : '&ne;' }} P(factors)</div>
+      <div
+        v-bind:class="{ 'warning': !(e && phi && gcd(e, phi) == 1) }"
+      >gcd(e, &phi;) {{ (e && phi && gcd(e, phi) == 1) ? '=' : '&ne;' }} 1</div>
       <!-- <div v-bind:class="{ 'warning': !(false) }">
         All factors in factorization are prime
-      </div> -->
+      </div>-->
     </div>
-  <div class="main">
-    <div class="header">RSA Idioten</div>
-    <div id="grid">
-      <div id="n">
-        N:
-        <input type="text" v-model="n" /><input
+    <div class="main">
+      <div class="header">RSA Idioten</div>
+      <div id="grid">
+        <div id="n">
+          N:
+          <input type="text" v-model="n" />
+          <input
             type="button"
             value="Calculate from factors"
             :disabled="nfactors.length == 0"
             @click="calculate_n"
-          /><br>
-        <br />E:
-        <input type="text" v-model="e" /><br>
-        Set from template: 
-        <a @click="set_e(3)"><b> 3</b></a>
-        <a @click="set_e(65537)"> | <b>65537</b></a>
-      </div>
-      <div id="n-info">
-        <div>
-          N Factorize tools
+          />
+          <br />
+          <br />E:
+          <input type="text" v-model="e" />
+          <br />Set from template:
+          <a @click="set_e(3)">
+            <b>3</b>
+          </a>
+          <a @click="set_e(65537)">
+            |
+            <b>65537</b>
+          </a>
         </div>
-        <div>
-          <input :disabled="!n" type="button" value="Fermat method (up to 10 millions)" @click="fermat_factorization()" />
-        </div>
-        <div>
-          <input disabled type="button" value="Bruteforce" />
-        </div>
-        <div>
-          <input disabled type="button" value="Factordb.com" />
-        </div>
-      </div>
-      <div id="p-q-phi">
-        <div>
-          &phi;(N):
-          <input type="text" v-model="phi" />
+        <div id="n-info">
+          <div>N Factorize tools</div>
           <div>
             <input
+              :disabled="!n"
               type="button"
-              value="Calculate from prime factors"
-              :disabled="(new Set(nfactors)).size != nfactors.length"
-              @click="calculate_phi"
+              value="Fermat method (up to 10 millions)"
+              @click="fermat_factorization()"
             />
-            <br />
+          </div>
+          <div>
+            <input disabled type="button" value="Bruteforce" />
+          </div>
+          <div>
+            <input disabled type="button" value="Factordb.com" />
           </div>
         </div>
-      </div>
-      <div class="n-factors">
-        N Prime Factorization ({{ nfactors.length }} factors found):
-        <br />
-        <textarea v-model="nfactors_raw" class="factors-textarea"></textarea>
-        <!-- {{ mr_filter().length }} -->
-      </div>
-      <div id="d">
-        Calculated D:
-        <input readonly type="text" v-model="d" />
-      </div>
-      <div id="enc-dec">
-        <div>
-          Cryptotext:
-          <input type="text" v-model="cryptotext" />
+        <div id="p-q-phi">
+          <div>
+            &phi;(N):
+            <input type="text" v-model="phi" />
+            <div>
+              <input
+                type="button"
+                value="Calculate from prime factors"
+                :disabled="0 == nfactors.length"
+                @click="calculate_phi"
+              />
+              <br />
+            </div>
+          </div>
         </div>
-        <div>
-        <input type="button" value="Decrypt" @click="decrypt" />
-        <input type="button" value="Encrypt" @click="encrypt" />
+        <div class="n-factors">
+          N Prime Factorization ({{ nfactors.length }} factors found):
+          <br />
+          <textarea v-model="nfactors_raw" class="factors-textarea"></textarea>
+          <!-- {{ mr_filter().length }} -->
         </div>
-        <div>
-          Plaintext:
-          <input type="text" v-model="plaintext" />
+        <div id="d">
+          Calculated D:
+          <input readonly type="text" v-model="d" />
         </div>
-      </div>
-      <div id="ascii">
-        Ascii:
-        <textarea type="text" v-model="ascii" class="ascii-ta" />
-      </div>
-      <div id="log">
-        Log: <input type="button" value="Clear" @click="logtext=''"/>
-        <textarea style="width: 100%; height: 300px;" :value="logtext"></textarea>
+        <div id="enc-dec">
+          <div>
+            Cryptotext:
+            <input type="text" v-model="cryptotext" />
+          </div>
+          <div>
+            <input type="button" value="Decrypt" @click="decrypt" />
+            <input type="button" value="Encrypt" @click="encrypt" />
+          </div>
+          <div>
+            Plaintext:
+            <input type="text" v-model="plaintext" />
+          </div>
+        </div>
+        <div id="ascii">
+          Ascii:
+          <textarea type="text" v-model="ascii" class="ascii-ta" />
+        </div>
+        <div id="log">
+          Log:
+          <input type="button" value="Clear" @click="logtext=''" />
+          <textarea style="width: 100%; height: 300px;" :value="logtext"></textarea>
+        </div>
       </div>
     </div>
-    
   </div>
-</div>
 </template>
 
 <script>
-/* global BigInt */
-import { egcd, expmod, hex_to_ascii, ascii_to_bi, bi_pow } from "../libs/utils";
-import { fermat_factorization } from "../libs/rsa";
+import { egcd, expmod, hex_to_ascii, ascii_to_bi, bi_pow } from "@/libs/utils";
+import { fermat_factorization } from "@/libs/rsa";
 
 export default {
   name: "MainView",
@@ -115,14 +124,13 @@ export default {
       logtext: ""
     };
   },
-  created: function() {
-  },
+  created: function() {},
   methods: {
-    gcd: function (x, y) {
+    gcd: function(x, y) {
       return egcd(x, y)[0];
     },
-    log: function (str) {
-      this.logtext += str + '\n';
+    log: function(str) {
+      this.logtext += str + "\n";
     },
     cast_to_bi: function() {
       this.e = this.e && BigInt(this.e);
@@ -134,27 +142,22 @@ export default {
     calculate_phi: function() {
       let factor_d = {};
       for (let i = 0; i < this.nfactors.length; i++) {
-        factor_d[this.nfactors[i].toString()] = (factor_d[this.nfactors[i].toString()] || 0n) + 1n;
+        factor_d[this.nfactors[i].toString()] =
+          (factor_d[this.nfactors[i].toString()] || 0n) + 1n;
       }
       let ans = 1n;
       for (let f in factor_d) {
-        // console.log(BigInt(f), factor_d[f]);
-        ans *= bi_pow(BigInt(f), factor_d[f]) - bi_pow(BigInt(f), factor_d[f] - 1n);
+        ans *=
+          bi_pow(BigInt(f), factor_d[f]) - bi_pow(BigInt(f), factor_d[f] - 1n);
       }
-      console.log(ans);
       this.phi = ans;
     },
-    // calculate_phi_from_equals: function() {
-    //   this.phi =
-    //     bi_pow(this.nfactors[0], BigInt(this.nfactors.length)) -
-    //     bi_pow(this.nfactors[0], BigInt(this.nfactors.length) - 1n);
-    // },
     calculate_n: function() {
       this.n = this.nfactors.reduce((a, x) => a * x);
     },
     fermat_factorization: function() {
       let ans = fermat_factorization(BigInt(this.n));
-      this.log('Fermat run: ' + (ans ? 'FOUND' : 'not found'));
+      this.log("Fermat run: " + (ans ? "FOUND" : "not found"));
       if (ans == null) {
         return false;
       } else {
@@ -171,7 +174,7 @@ export default {
     encrypt: function() {
       this.cryptotext = expmod(this.plaintext, this.e, this.n);
     },
-    mr_filter: function () {
+    mr_filter: function() {
       return this.nfactors.filter(() => !false);
     }
   },
@@ -180,12 +183,12 @@ export default {
     nfactors: {
       get: function() {
         try {
-        return this.nfactors_raw
-          .split("\n")
-          .filter(e => BigInt(e))
-          .map(e => BigInt(e));
+          return this.nfactors_raw
+            .split("\n")
+            .filter(e => BigInt(e))
+            .map(e => BigInt(e));
         } catch (e) {
-          this.log('N factors read failed: ' + e);
+          this.log("N factors read failed: " + e);
           return [];
         }
       },
@@ -217,8 +220,9 @@ export default {
 </script>
 
 <style>
-
-.container, body, html {
+.container,
+body,
+html {
   margin: 0;
   font-family: "Computer Modern Sans", sans-serif;
 }
@@ -226,7 +230,6 @@ export default {
 .main {
   max-width: 1000px;
   margin: 0 auto;
-  
 }
 
 .header {
@@ -283,9 +286,9 @@ export default {
   color: red;
 }
 
-#grid input[type="button"] {
+/* #grid input[type="button"] {
 
-}
+} */
 
 .factors-textarea {
   width: 100%;
