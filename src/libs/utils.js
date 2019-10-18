@@ -51,6 +51,26 @@ function bi_pow(a, b) {
   return ans;
 }
 
+function mod_pow(a, b, n) {
+  a = a % n;
+  var result = 1n;
+  var x = a;
+
+  while(b > 0n){
+    var leastSignificantBit = b % 2n;
+    b = b / 2n;
+
+    if (leastSignificantBit == 1n) {
+      result = result * x;
+      result = result % n;
+    }
+
+    x = x * x;
+    x = x % n;
+  }
+  return result;
+}
+
 function ascii_to_bi(str1) {
   var ans = 0n;
   for (var i = str1.length - 1; i > -1; i--) {
@@ -113,4 +133,4 @@ var expmod = function(a, b, n) {
 //   return true;
 // }
 
-export { egcd, expmod, hex_to_ascii, ascii_to_bi, sqrt, bi_pow };
+export { egcd, expmod, hex_to_ascii, ascii_to_bi, sqrt, bi_pow, mod_pow };
