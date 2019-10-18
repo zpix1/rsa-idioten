@@ -19,6 +19,9 @@ describe('fermat test', () => {
     test('2 is prime', () => {
         expect(is_probable_prime(2n)).toBeTruthy();
     });
+    test('43 is prime', () => {
+        expect(is_probable_prime(43n)).toBeTruthy();
+    });
     test('6 is not prime', () => {
         expect(is_probable_prime(6n)).toBeFalsy();
     });

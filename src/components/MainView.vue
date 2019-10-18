@@ -3,15 +3,27 @@
     <div id="floating-validations">
       Validations:
       <br />
-      <div
-        v-bind:class="{ 'warning': !(!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) }"
-      >N {{ (!!nfactors.length && n == nfactors.reduce((a, x) => a*x)) ? '=' : '&ne;' }} P(factors)</div>
-      <div
-        v-bind:class="{ 'warning': !(e && phi && gcd(e, phi) == 1) }"
-      >gcd(e, &phi;) {{ (e && phi && gcd(e, phi) == 1) ? '=' : '&ne;' }} 1</div>
-      <!-- <div v-bind:class="{ 'warning': !(false) }">
+      1. <div class='warning' v-if='!(!!nfactors.length && n == nfactors.reduce((a, x) => a*x))'>
+        N &ne; prod(factors)
+      </div>
+      <div v-else>
+        N = prod(factors)
+      </div>
+      2. <div class='warning' v-if='!(e && phi && gcd(e, phi) == 1)'>
+        gcd(e, &phi;) &ne; 1
+      </div>
+      <div v-else>
+        gcd(e, &phi;) = 1
+      </div>
+      3. <div class='warning' v-if='is_composite_filter().length != 0'>
+        NOT all factors in factorization are prime:
+        <div v-for="(comp, i) in is_composite_filter()" :key="i">
+          {{ i + 1 }}. {{ comp }}
+        </div>
+      </div>
+      <div v-else>
         All factors in factorization are prime
-      </div>-->
+      </div>
     </div>
     <div class="main">
       <div class="header">RSA Idioten</div>
@@ -73,7 +85,7 @@
           N Prime Factorization ({{ nfactors.length }} factors found):
           <br />
           <textarea v-model="nfactors_raw" class="factors-textarea"></textarea>
-          <!-- {{ mr_filter().length }} -->
+          <!-- {{ is_composite_filter().length }} -->
         </div>
         <div id="d">
           Calculated D:
@@ -109,7 +121,7 @@
 
 <script>
 import { egcd, expmod, hex_to_ascii, ascii_to_bi, bi_pow } from "@/libs/utils";
-import { fermat_factorization } from "@/libs/rsa";
+import { fermat_factorization, is_probable_prime } from "@/libs/rsa";
 
 export default {
   name: "MainView",
@@ -174,8 +186,8 @@ export default {
     encrypt: function() {
       this.cryptotext = expmod(this.plaintext, this.e, this.n);
     },
-    mr_filter: function() {
-      return this.nfactors.filter(() => !false);
+    is_composite_filter: function() {
+      return this.nfactors.filter(x => !is_probable_prime(x));
     }
   },
 
@@ -274,6 +286,7 @@ html {
   clear: both;
   overflow: auto;
   top: 100px;
+  width: 170px;
 
   padding: 10px;
   margin-left: 0px;

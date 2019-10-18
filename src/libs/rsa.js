@@ -27,7 +27,7 @@ function fermat_factorization(n, k=1e6, log_f=()=>{}) {
   return null;
 }
 
-function is_probable_prime(n, k = 1000) {
+function is_probable_prime(n, k = 50) {
   if (n <= 1n) {
     return false;
   }
@@ -35,8 +35,7 @@ function is_probable_prime(n, k = 1000) {
   if (n == 2n || n == 3n) {
     return true;
   }
-
-  for (let i = 2n; i < 100n; i++) {
+  for (let i = 2n; i < (100n > sqrt(n) ? sqrt(n) + 1n : 100n); i++) {
     if (n % i == 0n) {
       return false;
     }
@@ -51,7 +50,7 @@ function is_probable_prime(n, k = 1000) {
     return true;
   }
 
-  for (let i = 2n; i < k; i++) {
+  for (let i = 2n; i < (n < k ? n : k); i++) {
     if (mod_pow(i, n - 1n, n) != 1n) {
       return false;
     }
