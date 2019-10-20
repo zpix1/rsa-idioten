@@ -66,11 +66,24 @@ async function factorize_using_factor_db(n, log_f) {
           let as = pe[2].children;
           log_f("[FACTOR DB] Factorization: " + pe[2].innerText);
           let ans = [];
+          let factors = pe[2].innerText.split(' · ');
+          factors[0] = factors[0].split('=')[1].trim()
+          let factors_count = [];
+          for (let i = 0; i < factors.length; i++) {
+            if (factors[i].includes('^')) {
+              factors_count.push(parseInt(factors[i].split('^')[1]));
+            } else {
+              factors_count.push(1);
+            }
+          }
+          let fi = 0;
           for (let i = 1; i < as.length; i++) {
             if (as[i].nodeName === 'A') {
               let href = as[i].getAttribute('href');
-              log_f("[FACTOR DB] Loading factor n. " + (i));
-              ans.push(await get_prime(fdb_url + href))
+              log_f("[FACTOR DB] Loading factor n. " + (fi) + ' ** ' + factors_count[fi]);
+              let factor = await get_prime(fdb_url + href);
+              ans = ans.concat(Array(factors_count[fi]).fill(factor));
+              fi++;
             }
           }
           log_f("[FACTOR DB] Loaded " + ans.length + " factors");
