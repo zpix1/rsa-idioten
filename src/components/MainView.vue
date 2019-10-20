@@ -27,6 +27,7 @@
     </div>
     <div class="main">
       <div class="header">RSA Idioten</div>
+      <div class="subheader">A tool to solve RSA CTF tasks easily...</div>
       <div id="grid">
         <div id="n">
           N:
@@ -81,7 +82,7 @@
             </div>
           </div>
         </div>
-        <div class="n-factors">
+        <div id="n-factors">
           N Prime Factorization ({{ nfactors.length }} factors found):
           <br />
           <textarea v-model="nfactors_raw" class="factors-textarea"></textarea>
@@ -111,8 +112,12 @@
         </div>
         <div id="log">
           Log:
-          <input type="button" value="Clear" @click="logtext=''" />
-          <textarea style="width: 100%; height: 300px;" :value="logtext"></textarea>
+          <input type="button" value="Clear" @click="logtext=''" /><br>
+          <textarea style="width: 100%; height: 300px" :value="logtext"></textarea>
+        </div>
+        <div id="contacts">
+          Made by @zpix1, 2019.<br>
+          Feel free to contact me (GH: <a href="https://github.com/zpix1">github.com/zpix1</a>)
         </div>
       </div>
     </div>
@@ -136,7 +141,11 @@ export default {
       logtext: ""
     };
   },
-  created: function() {},
+  created: function() {
+    if (BigInt == undefined) {
+      alert("Looks like your browser does not support BigInt, this app won't work here.");
+    }
+  },
   methods: {
     gcd: function(x, y) {
       return egcd(x, y)[0];
@@ -249,13 +258,19 @@ html {
   text-align: center;
 }
 
+.subheader {
+  font-size: 1.5vw;
+  text-align: center;
+}
+
 #grid {
+  padding-bottom: 20px;
   display: grid;
   grid-template-areas:
-    "n n-info n-info log log"
-    "p-q-phi p-q-phi n-factor log log"
-    "p-q-phi p-q-phi d . ."
-    "enc-dec enc-dec ascii . .";
+    "n        n-info    log      log"
+    "p-q-phi  n-factors log      log"
+    "d        n-factors contacts contacts"
+    "enc-dec   ascii    .        .";
   grid-gap: 10px;
 }
 
@@ -265,7 +280,8 @@ html {
   font-size: 20px;
   padding: 0.5em;
   background: gold;
-  /* padding: 20px; */
+  padding: 10px;
+  /* padding-bottom: 0px; */
 }
 
 #grid input[type="text"] {
@@ -309,8 +325,8 @@ html {
 }
 
 #log {
-  width: 300px;
-  margin-right: -100px;
+  /* width: 300px;
+  margin-right: -100px; */
   grid-area: log;
 }
 
@@ -323,6 +339,7 @@ html {
 }
 
 #n-factors {
+  /* height: 100%; */
   grid-area: n-factors;
 }
 
@@ -340,6 +357,10 @@ html {
 
 #ascii {
   grid-area: ascii;
+}
+
+#contacts {
+  grid-area: contacts;
 }
 
 #ascii .ascii-ta {
