@@ -20,7 +20,7 @@ function str_to_el(str) {
 
 async function get_prime(url) {
   var id = (new URL(url.substr(cors_proxy_url.length))).searchParams.get("id");
-  console.log(showid_url + id)
+  // console.log(showid_url + id)
   let x = await axios.get(showid_url + id).then(r => {
     let x = str_to_el(r.data);
       let pe = x.getElementsByTagName("table");
