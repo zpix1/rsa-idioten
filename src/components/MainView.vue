@@ -64,7 +64,12 @@
             <input disabled type="button" value="Bruteforce" />
           </div>
           <div>
-            <input disabled type="button" value="Factordb.com" />
+            <input
+              :disabled="!n"
+              type="button"
+              value="Request to factordb.com"
+              @click="factorize_from_factor_db()"
+            />
           </div>
         </div>
         <div id="p-q-phi">
@@ -117,7 +122,9 @@
         </div>
         <div id="contacts">
           Made by @zpix1, 2019.<br>
-          Feel free to contact me (GH: <a href="https://github.com/zpix1">github.com/zpix1</a>)
+          Feel free to contact me<br> (GH: <a href="https://github.com/zpix1">github.com/zpix1</a>)
+          <br>Changelog:<br>
+              v1.1.0: FactorDB request implemented
         </div>
       </div>
     </div>
@@ -127,6 +134,7 @@
 <script>
 import { egcd, expmod, hex_to_ascii, ascii_to_bi, bi_pow } from "@/libs/utils";
 import { fermat_factorization, is_probable_prime } from "@/libs/rsa";
+import { factorize_using_factor_db } from '@/libs/factordb';
 
 export default {
   name: "MainView",
@@ -145,6 +153,8 @@ export default {
     if (BigInt == undefined) {
       alert("Looks like your browser does not support BigInt, this app won't work here.");
     }
+    // let n = 633218484847468368525848301443122306786970110976718111805273874695786406863674759414074655209372506662667267208258185661226506428878056806546282568747105193734939031530813064575924532743694757739704330167664865505156148938567160679003150091858433397041289157128561024140039009n
+    
   },
   methods: {
     gcd: function(x, y) {
@@ -197,6 +207,11 @@ export default {
     },
     is_composite_filter: function() {
       return this.nfactors.filter(x => !is_probable_prime(x));
+    },
+    factorize_from_factor_db: function () {
+      factorize_using_factor_db(this.n, this.log).then(factors => {
+        this.nfactors = factors;
+      });
     }
   },
 
@@ -254,12 +269,12 @@ html {
 }
 
 .header {
-  font-size: 3vw;
+  font-size: 35px;
   text-align: center;
 }
 
 .subheader {
-  font-size: 1.5vw;
+  font-size: 20px;
   text-align: center;
 }
 

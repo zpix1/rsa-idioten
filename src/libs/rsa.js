@@ -1,25 +1,25 @@
 import { sqrt, mod_pow } from "@/libs/utils";
 
-function fermat_factorization(n, k=1e6, log_f=()=>{}) {
+function fermat_factorization(n, k = 1e6, log_f = () => {}) {
   if (n % 2n === 0n) {
     return null;
   }
 
   let a = sqrt(n);
   let b = 0n;
-  
+
   let i = 0;
   while (i < k) {
     if (i % 100000 === 0) {
-        log_f('Fermat factorization progress: ', i, a, b, n);
+      log_f("Fermat factorization progress: ", i, a, b, n);
     }
-    let m = (a*a) - (b*b);
+    let m = a * a - b * b;
     if (m === n) {
-        return a + b;
+      return a + b;
     } else if (m < n) {
-        a++;
+      a++;
     } else {
-        b++;
+      b++;
     }
     i++;
   }

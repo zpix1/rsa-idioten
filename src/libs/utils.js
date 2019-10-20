@@ -1,18 +1,18 @@
 function sqrt(value) {
   if (value < 0n) {
-      throw 'square root of negative numbers is not supported'
+    throw "square root of negative numbers is not supported";
   }
 
   if (value < 2n) {
-      return value;
+    return value;
   }
 
   function newtonIteration(n, x0) {
-      const x1 = ((n / x0) + x0) >> 1n;
-      if (x0 === x1 || x0 === (x1 - 1n)) {
-          return x0;
-      }
-      return newtonIteration(n, x1);
+    const x1 = (n / x0 + x0) >> 1n;
+    if (x0 === x1 || x0 === x1 - 1n) {
+      return x0;
+    }
+    return newtonIteration(n, x1);
   }
 
   return newtonIteration(value, 1n);
@@ -56,7 +56,7 @@ function mod_pow(a, b, n) {
   var result = 1n;
   var x = a;
 
-  while(b > 0n){
+  while (b > 0n) {
     var leastSignificantBit = b % 2n;
     b = b / 2n;
 
@@ -74,7 +74,8 @@ function mod_pow(a, b, n) {
 function ascii_to_bi(str1) {
   var ans = 0n;
   for (var i = str1.length - 1; i > -1; i--) {
-    ans += BigInt(str1.charCodeAt(i)) * bi_pow(256n, BigInt(str1.length - i - 1));
+    ans +=
+      BigInt(str1.charCodeAt(i)) * bi_pow(256n, BigInt(str1.length - i - 1));
   }
   // console.log(hex_to_ascii(ans.toString(16)));
   return ans;
@@ -107,7 +108,7 @@ var expmod = function(a, b, n) {
     x = x % n;
   }
   return result;
-}
+};
 
 // function mr_test(n, k=100){
 //   if(n<2) return false;

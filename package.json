@@ -1,6 +1,6 @@
 {
   "name": "rsa-idioten",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "big-integer": "^1.6.47",
     "core-js": "^2.6.5",
     "vue": "^2.6.10"
